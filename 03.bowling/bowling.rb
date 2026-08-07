@@ -14,23 +14,23 @@ scores.each do |s|
 end
 
 frames = shots.each_slice(2).to_a
-
-point = 0
-9.times do |i|
+point = 10.times.sum do |i|
   frame = frames[i]
+  next_frame = frames[i + 1]
 
-  point += if frame[0] == 10 # ストライク
-             if frames[i + 1][0] == 10
-               10 + frames[i + 1][0] + frames[i + 2][0]
-             else
-               10 + frames[i + 1][0] + frames[i + 1][1]
-             end
-           elsif frame.sum == 10 # スペア
-             10 + frames[i + 1][0]
-           else
-             frame.sum
-           end
+  if i == 9
+    frames[i..].flatten.sum
+  elsif frame[0] == 10
+    if next_frame[0] == 10
+      10 + next_frame[0] + frames[i + 2][0]
+    else
+      10 + next_frame[0..1].sum
+    end
+  elsif frame.sum == 10
+    10 + next_frame[0]
+  else
+    frame.sum
+  end
 end
 
-point += frames[9..].flatten.sum
 puts point
