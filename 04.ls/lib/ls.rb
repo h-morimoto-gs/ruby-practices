@@ -3,7 +3,7 @@
 COLUMN_COUNT = 3
 
 def fetch_files
-  Dir.glob('*').sort
+  Dir.entries('.').sort
 end
 
 def build_table(files, column_count)
