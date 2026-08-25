@@ -2,8 +2,9 @@
 
 COLUMN_COUNT = 3
 
-def fetch_files
-  Dir.entries('.').sort
+def fetch_files(show_all: false)
+  flags = show_all ? File::FNM_DOTMATCH : 0
+  Dir.glob('*', flags).sort
 end
 
 def build_table(files, column_count)
@@ -18,7 +19,8 @@ def print_table(table, width)
   end
 end
 
-files = fetch_files
+show_all = ARGV.include?('-a')
+files = fetch_files(show_all:)
 
 unless files.empty?
   table = build_table(files, COLUMN_COUNT)
