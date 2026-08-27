@@ -3,7 +3,7 @@
 require_relative 'shot'
 
 class Frame
-  attr_reader :first_shot, :second_shot, :third_shot
+  attr_reader :first_shot, :second_shot
 
   def initialize(first_mark, second_mark, third_mark = nil)
     @first_shot = Shot.new(first_mark)
@@ -12,7 +12,7 @@ class Frame
   end
 
   def score
-    [first_shot.score, second_shot.score, third_shot.score].sum
+    [first_shot.score, second_shot.score, @third_shot.score].sum
   end
 
   def strike?
