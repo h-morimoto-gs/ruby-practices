@@ -2,9 +2,10 @@
 
 COLUMN_COUNT = 3
 
-def fetch_files(show_all: false)
+def fetch_files(show_all:, reverse:)
   flags = show_all ? File::FNM_DOTMATCH : 0
-  Dir.glob('*', flags).sort
+  files = Dir.glob('*', flags).sort
+  reverse ? files.reverse : files
 end
 
 def build_table(files, column_count)
@@ -20,7 +21,8 @@ def print_table(table, width)
 end
 
 show_all = ARGV.include?('-a')
-files = fetch_files(show_all:)
+reverse = ARGV.include?('-r')
+files = fetch_files(show_all:, reverse:)
 
 unless files.empty?
   table = build_table(files, COLUMN_COUNT)
