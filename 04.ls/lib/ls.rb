@@ -67,7 +67,7 @@ def format_file_line(row, widths)
   ].join(' ')
 end
 
-def display_long_format(files)
+def print_long_format(files)
   rows = build_file_rows(files)
   widths = calculate_widths(rows)
   puts "total #{rows.sum { |row| row[:blocks] } / 2}"
@@ -94,7 +94,7 @@ files = fetch_and_sort_files(show_all:, reverse:)
 
 unless files.empty?
   if long
-    display_long_format(files)
+    print_long_format(files)
   else
     table = build_table(files, COLUMN_COUNT)
     print_table(table, files.map(&:size).max + 2)
