@@ -80,7 +80,9 @@ def build_table(files, column_count)
   columns.map { |col| col.values_at(0...rows) }.transpose
 end
 
-def print_table(table, width)
+def print_table(files, column_count)
+  table = build_table(files, column_count)
+  width = files.map(&:size).max + 2
   table.each do |row|
     puts row.map { |file| file.to_s.ljust(width) }.join.rstrip
   end
@@ -96,7 +98,6 @@ unless files.empty?
   if long
     print_long_format(files)
   else
-    table = build_table(files, COLUMN_COUNT)
-    print_table(table, files.map(&:size).max + 2)
+    print_table(files, COLUMN_COUNT)
   end
 end
