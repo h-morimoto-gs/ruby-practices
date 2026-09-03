@@ -1,17 +1,22 @@
 # frozen_string_literal: true
 
 require_relative 'frame'
+require_relative 'shot'
 
 class Game
+  FRAME_COUNT = 10
+  LAST_FRAME_INDEX = FRAME_COUNT - 1
+  SHOTS_PER_FRAME = 2
+
   def initialize(marks)
     marks = marks.split(',')
     @frames = []
 
-    9.times do
-      frame = if marks.first == 'X'
-                Frame.new(marks.shift, '0')
+    (FRAME_COUNT - 1).times do
+      frame = if marks.first == Shot::STRIKE_MARK
+                Frame.new(marks.shift)
               else
-                Frame.new(*marks.shift(2))
+                Frame.new(*marks.shift(SHOTS_PER_FRAME))
               end
       @frames.push(frame)
     end
@@ -20,15 +25,19 @@ class Game
   end
 
   def score
-    10.times.sum { |i| frame_score(i) }
+    FRAME_COUNT.times.sum { |i| frame_score(i) }
   end
 
   private
 
+  def last_frame?(index)
+    index == LAST_FRAME_INDEX
+  end
+
   def frame_score(index)
     frame = @frames[index]
 
-    return frame.score if index == 9
+    return frame.score if last_frame?(index)
     return frame.score + strike_bonus(index) if frame.strike?
     return frame.score + spare_bonus(index) if frame.spare?
 
@@ -38,7 +47,7 @@ class Game
   def strike_bonus(index)
     next_frame = @frames[index + 1]
 
-    if next_frame.strike? && index != 8
+    if next_frame.strike? && !last_frame?(index + 1)
       next_frame.first_shot.score + @frames[index + 2].first_shot.score
     else
       next_frame.first_shot.score + next_frame.second_shot.score
