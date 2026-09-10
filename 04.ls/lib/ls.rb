@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'etc'
+require 'optparse'
 
 COLUMN_COUNT = 3
 
@@ -14,6 +15,16 @@ PERM_MAP = {
   '6' => 'rw-',
   '7' => 'rwx'
 }.freeze
+
+def parse_options
+  options = { all: false, reverse: false, long: false }
+  OptionParser.new do |opt|
+    opt.on('-a') { options[:all] = true }
+    opt.on('-r') { options[:reverse] = true }
+    opt.on('-l') { options[:long] = true }
+  end.parse!(ARGV)
+  options
+end
 
 def fetch_and_sort_files(show_all:, reverse:)
   flags = show_all ? File::FNM_DOTMATCH : 0
@@ -88,14 +99,11 @@ def print_table(files, column_count)
   end
 end
 
-show_all = ARGV.include?('-a')
-reverse = ARGV.include?('-r')
-long = ARGV.include?('-l')
-
-files = fetch_and_sort_files(show_all:, reverse:)
+options = parse_options
+files = fetch_and_sort_files(show_all: options[:all], reverse: options[:reverse])
 
 unless files.empty?
-  if long
+  if options[:long]
     print_long_format(files)
   else
     print_table(files, COLUMN_COUNT)
