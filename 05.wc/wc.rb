@@ -15,7 +15,7 @@ keys << :words if params[:words]
 keys << :bytes if params[:bytes]
 keys = %i[lines words bytes] if keys.empty?
 
-def count_up(string, name)
+def build_result(string, name)
   {
     lines: string.count("\n"),
     words: string.split.size,
@@ -26,9 +26,9 @@ end
 
 results =
   if ARGV.empty?
-    [count_up($stdin.read, '')]
+    [build_result($stdin.read, '')]
   else
-    ARGV.map { |file_name| count_up(File.read(file_name), file_name) }
+    ARGV.map { |file_name| build_result(File.read(file_name), file_name) }
   end
 
 width =
