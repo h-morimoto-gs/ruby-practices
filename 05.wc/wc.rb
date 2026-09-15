@@ -15,38 +15,38 @@ keys << :words if params[:words]
 keys << :bytes if params[:bytes]
 keys = %i[lines words bytes] if keys.empty?
 
-def build_result(string, name)
+def count_text(text, name)
   {
-    lines: string.count("\n"),
-    words: string.split.size,
-    bytes: string.bytesize,
+    lines: text.count("\n"),
+    words: text.split.size,
+    bytes: text.bytesize,
     name: name
   }
 end
 
-results =
+counts =
   if ARGV.empty?
-    [build_result($stdin.read, '')]
+    [count_text($stdin.read, '')]
   else
-    ARGV.map { |file_name| build_result(File.read(file_name), file_name) }
+    ARGV.map { |file_name| count_text(File.read(file_name), file_name) }
   end
 
 width =
-  if keys.size == 1 && results.size == 1
+  if keys.size == 1 && counts.size == 1
     1
   elsif ARGV.empty?
     7
   else
-    results.sum { |result| result[:bytes] }.to_s.size
+    counts.sum { |count| count[:bytes] }.to_s.size
   end
 
-results.each do |result|
-  line = keys.map { |key| format("%#{width}d", result[key]) }.join(' ')
-  line += " #{result[:name]}" unless result[:name].empty?
+counts.each do |count|
+  line = keys.map { |key| format("%#{width}d", count[key]) }.join(' ')
+  line += " #{count[:name]}" unless count[:name].empty?
   puts line
 end
 
-if results.size > 1
-  line = keys.map { |key| format("%#{width}d", results.sum { |result| result[key] }) }.join(' ')
+if counts.size > 1
+  line = keys.map { |key| format("%#{width}d", counts.sum { |count| count[key] }) }.join(' ')
   puts "#{line} total"
 end
